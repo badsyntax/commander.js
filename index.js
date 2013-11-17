@@ -153,6 +153,7 @@ Command.prototype.command = function(name, desc){
   this.commands.push(cmd);
   cmd.parseExpectedArgs(args);
   cmd.parent = this;
+  cmd.input = {};
   if (desc) return this;
   return cmd;
 };
@@ -314,7 +315,7 @@ Command.prototype.option = function(flags, description, fn, defaultValue){
     // when --no-* we make sure default is true
     if (false == option.bool) defaultValue = true;
     // preassign only if we have a default
-    if (undefined !== defaultValue) self[name] = defaultValue;
+    if (undefined !== defaultValue) self.input[name] = defaultValue;
   }
 
   // register the option
@@ -327,18 +328,18 @@ Command.prototype.option = function(flags, description, fn, defaultValue){
     if (null != val && fn) val = fn(val);
 
     // unassigned or bool
-    if ('boolean' == typeof self[name] || 'undefined' == typeof self[name]) {
+    if ('boolean' == typeof self.input[name] || 'undefined' == typeof self.input[name]) {
       // if no value, bool true, and we have a default, then use it!
       if (null == val) {
-        self[name] = option.bool
+        self.input[name] = option.bool
           ? defaultValue || true
           : false;
       } else {
-        self[name] = val;
+        self.input[name] = val;
       }
     } else if (null !== val) {
       // reassign
-      self[name] = val;
+      self.input[name] = val;
     }
   });
 
